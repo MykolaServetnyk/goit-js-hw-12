@@ -15,7 +15,7 @@ const inputField = document.querySelector('.searchInput');
 const galleryEl = document.querySelector('.image-gallery');
 const loadMoreBtn = document.querySelector('.load-more-btn');
 
-
+/*Створення loader*/
 const loader = document.createElement('span')
 loader.classList.add('loader');
 
@@ -25,7 +25,7 @@ let currentQuery = '';
 function clearGallery() {
     galleryEl.innerHTML = '';
 }
-
+/*Функції приховування та показу кнопок і loader*/
 function showLoadMoreButton() {
     loadMoreBtn.style.display = 'block';
 }
@@ -51,6 +51,7 @@ function resetPage() {
 }
 
 
+
 searchForm.addEventListener('submit', async function (event) {
     event.preventDefault();
 
@@ -71,6 +72,12 @@ searchForm.addEventListener('submit', async function (event) {
         showLoader();
         const images = await fetchImages(userInput, currentPage);
         renderPhotoList(images, galleryEl);
+        // Висота карточки галереї
+        const cardHeight = galleryEl.firstElementChild.getBoundingClientRect().height;
+
+        // Прокручування на 2 висоти карточки галереї
+        window.scrollBy({ top: 2 * cardHeight, behavior: 'smooth' });
+
         showLoadMoreButton();
     } catch (error) {
         console.error('Error:', error);
@@ -79,27 +86,28 @@ searchForm.addEventListener('submit', async function (event) {
     }
 });
 
-function handleLoadMore() {
+async function handleLoadMore() {
     currentPage++;
-    loadMoreBtn.before(loader)
+    loadMoreBtn.before(loader);
     showLoader();
     hideLoadMoreButton();
 
-    fetchImages(currentQuery, currentPage)
-        .then(images => {
-            renderPhotoList(images, galleryEl);
-            hideLoader();
+    try {
+        const images = await fetchImages(currentQuery, currentPage);
+        renderPhotoList(images, galleryEl);
+        // Висота карточки галереї
+        const cardHeight = galleryEl.firstElementChild.getBoundingClientRect().height;
 
-        })
-        .catch(error => {
-            hideLoader();
-            console.error('Error:', error);
-        })
-        .finally(() => {
-            hideLoader();
-            showLoadMoreButton();
-        });
+        // Прокручування на 2 висоти карточки галереї
+        window.scrollBy({ top: 2 * cardHeight, behavior: 'smooth' });
+    } catch (error) {
+        console.error('Error:', error);
+    } finally {
+        hideLoader();
+        showLoadMoreButton();
+    }
 }
+
 
 loadMoreBtn.addEventListener('click', handleLoadMore);
 
