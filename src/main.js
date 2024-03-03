@@ -2,12 +2,12 @@
 
 import iziToast from "izitoast";
 import "izitoast/dist/css/iziToast.min.css";
-import axios from 'axios';
+import axios, { formToJSON } from 'axios';
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 
 import './css/loader.css';
-import fetchImages from './js/pixabay-api';
+import { fetchImages, perPage } from './js/pixabay-api'
 import renderPhotoList from './js/render-functions';
 
 const searchForm = document.getElementById('search-form');
@@ -96,9 +96,9 @@ searchForm.addEventListener('submit', async function (event) {
     }
 });
 
+
 async function handleLoadMore() {
     let images;
-    const expectedImagesPerPage = 15;
     currentPage += 1;
     loadMoreBtn.before(loader);
     showLoader();
@@ -106,7 +106,7 @@ async function handleLoadMore() {
 
     try {
 
-        images = await fetchImages(currentQuery, currentPage, expectedImagesPerPage);
+        images = await fetchImages(currentQuery, currentPage, perPage);
         renderPhotoList(images, galleryEl);
         scrollToCardHeight(2);
 
@@ -116,7 +116,7 @@ async function handleLoadMore() {
 
     } finally {
         hideLoader();
-        if (images.length < expectedImagesPerPage) {
+        if (images.length < perPage) {
             hideLoadMoreButton(); // Приховуємо кнопку "Load More"
         } else {
             showLoadMoreButton();

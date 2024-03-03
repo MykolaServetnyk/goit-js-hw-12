@@ -6,8 +6,10 @@ import axios from 'axios';
 
 const BASE_URI = 'https://pixabay.com/api/';
 const KEY = '42459298-1821cc9c9c9d24f5ec127ca7c';
+const perPage = 15;
 
-const fetchImages = async (userInput, page = 1, perPage = 15) => {
+
+const fetchImages = async (userInput, page = 1) => {
     const searchLink = `${BASE_URI}?key=${KEY}&q=${userInput}&image-type=photo&orientation=horizontal&safesearch=true&page=${page}&per_page=${perPage}`;
 
     try {
@@ -24,7 +26,7 @@ const fetchImages = async (userInput, page = 1, perPage = 15) => {
             });
         }
 
-        if (page * perPage > response.data.totalHits) {
+        if (response.data.totalHits && page * perPage > response.data.totalHits) {
             // Кінець колекції
             iziToast.info({
                 message: "We're sorry, but you've reached the end of search results.",
@@ -43,7 +45,8 @@ const fetchImages = async (userInput, page = 1, perPage = 15) => {
         console.error('Error fetching data:', error);
         throw new Error('Image error!');
     }
+
 };
 
 
-export default fetchImages;
+export { fetchImages, perPage };
