@@ -26,7 +26,7 @@ const fetchImages = async (userInput, page = 1) => {
             });
         }
 
-        if (response.data.totalHits && page * perPage > response.data.totalHits) {
+        if (response.data.totalHits > 0 && page * perPage > response.data.totalHits) {
             // Кінець колекції
             iziToast.info({
                 message: "We're sorry, but you've reached the end of search results.",
@@ -40,7 +40,7 @@ const fetchImages = async (userInput, page = 1) => {
 
         }
 
-        return response.data.hits;
+        return response.data.hits || [];
     } catch (error) {
         console.error('Error fetching data:', error);
         throw new Error('Image error!');
