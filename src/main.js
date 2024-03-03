@@ -97,22 +97,30 @@ searchForm.addEventListener('submit', async function (event) {
 });
 
 async function handleLoadMore() {
-    currentPage++;
+    let images;
+    const expectedImagesPerPage = 15;
+    currentPage += 1;
     loadMoreBtn.before(loader);
     showLoader();
     hideLoadMoreButton();
 
     try {
-        const images = await fetchImages(currentQuery, currentPage);
+
+        images = await fetchImages(currentQuery, currentPage, expectedImagesPerPage);
         renderPhotoList(images, galleryEl);
         scrollToCardHeight(2);
 
 
     } catch (error) {
         console.error('Error:', error);
+
     } finally {
         hideLoader();
-        showLoadMoreButton();
+        if (images.length < expectedImagesPerPage) {
+            hideLoadMoreButton(); // Приховуємо кнопку "Load More"
+        } else {
+            showLoadMoreButton();
+        }
     }
 }
 

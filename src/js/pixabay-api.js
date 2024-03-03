@@ -24,7 +24,7 @@ const fetchImages = async (userInput, page = 1, perPage = 15) => {
             });
         }
 
-        if (response.data.totalHits && page * perPage > response.data.totalHits) {
+        if (page * perPage > response.data.totalHits) {
             // Кінець колекції
             iziToast.info({
                 message: "We're sorry, but you've reached the end of search results.",
@@ -33,7 +33,9 @@ const fetchImages = async (userInput, page = 1, perPage = 15) => {
                 theme: 'light',
 
             });
+
             return [];
+
         }
 
         return response.data.hits;
