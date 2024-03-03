@@ -49,8 +49,17 @@ hideLoadMoreButton();
 function resetPage() {
     currentPage = 1;
 }
+/*Скрол на вікна*/
+function scrollToCardHeight(times) {
+    const firstChild = galleryEl.firstElementChild;
 
+    if (firstChild) {
+        const cardHeight = firstChild.getBoundingClientRect().height;
+        window.scrollBy({ top: times * cardHeight, behavior: 'smooth' });
+    }
+    return
 
+}
 
 searchForm.addEventListener('submit', async function (event) {
     event.preventDefault();
@@ -71,12 +80,13 @@ searchForm.addEventListener('submit', async function (event) {
     try {
         showLoader();
         const images = await fetchImages(userInput, currentPage);
+        if (images.length === 0) {
+            hideLoadMoreButton();
+            return;
+        }
         renderPhotoList(images, galleryEl);
-        // Висота карточки галереї
-        const cardHeight = galleryEl.firstElementChild.getBoundingClientRect().height;
+        scrollToCardHeight(2);
 
-        // Прокручування на 2 висоти карточки галереї
-        window.scrollBy({ top: 2 * cardHeight, behavior: 'smooth' });
 
         showLoadMoreButton();
     } catch (error) {
@@ -95,11 +105,9 @@ async function handleLoadMore() {
     try {
         const images = await fetchImages(currentQuery, currentPage);
         renderPhotoList(images, galleryEl);
-        // Висота карточки галереї
-        const cardHeight = galleryEl.firstElementChild.getBoundingClientRect().height;
+        scrollToCardHeight(2);
 
-        // Прокручування на 2 висоти карточки галереї
-        window.scrollBy({ top: 2 * cardHeight, behavior: 'smooth' });
+
     } catch (error) {
         console.error('Error:', error);
     } finally {
